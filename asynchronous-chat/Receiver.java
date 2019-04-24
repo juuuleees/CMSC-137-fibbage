@@ -20,7 +20,9 @@ public class Receiver extends Thread {
 		this.server = s;
 	}
 
-	public ChatMessage receive_message(Socket s) {				
+	public ChatMessage receive_message(Socket s) {		
+
+		// System.out.println("halp");
 
 		try {
 
@@ -28,11 +30,15 @@ public class Receiver extends Thread {
 
 			DataInputStream in = new DataInputStream(s.getInputStream());
 			String sender_message = in.readUTF();
+
+			System.out.println(sender_message);
 	
 			new_msg = new ChatMessage(sender_addr, sender_message);
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			System.out.println("receiving!!");
 		}
 
 		return new_msg;

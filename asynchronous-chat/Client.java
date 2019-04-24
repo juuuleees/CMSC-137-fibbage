@@ -39,12 +39,13 @@ public class Client extends Thread {
 			try {
 
 				Socket client = new Socket(this.server_name, this.port);
-				System.out.println(client.isConnected());
+				System.out.println("Just connected to " + client.getRemoteSocketAddress());
 	
 				client_sender.send_message(client);
 	
 			} catch (IOException e) {
 				e.printStackTrace();
+				break;
 			}
 
 		}
@@ -54,7 +55,7 @@ public class Client extends Thread {
 
 	public static void main(String[] args) {
 
-		// run command: java Client <server name> <port number> 
+		// run command: java Client <server ip> <port number> 
 
 		String server = args[0];
 		int port = Integer.parseInt(args[1]);

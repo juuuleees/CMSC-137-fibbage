@@ -22,25 +22,6 @@ public class Sender extends Thread {
 
 	}
 
-/*
-
-	// this function is in ServerDisplay.java now
-
-	public ChatMessage send_message(Socket s, ChatMessage c) {			// sender function for server
-
-		try {
-
-			DataOutputStream out = new DataOutputStream(s.getOutputStream());
-			out.writeUTF(c.sender_ip + ": " + c.message);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-*/
-
 	/*
 	
 		Client sends a message to the server.
@@ -48,6 +29,8 @@ public class Sender extends Thread {
 	*/
 
 	public String send_message(Socket c) {
+
+		// System.out.println("send halp");
 
 		try {
 
@@ -58,9 +41,14 @@ public class Sender extends Thread {
 			System.out.print("Message: ");
 	
 			this.message = msg_reader.nextLine();
+			System.out.println(this.message);
+
+			out.writeUTF(this.message);
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			// System.out.println("not sending!!");
 		}
 
 		return message;
@@ -69,6 +57,7 @@ public class Sender extends Thread {
 
 	public void run() {
 		System.out.println("sender thread");
+		// this.send_message(this.server);
 	}
 
 }

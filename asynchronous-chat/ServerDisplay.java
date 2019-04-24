@@ -43,6 +43,7 @@ public class ServerDisplay extends Thread {
 
 	public void run() {
 		System.out.println("server's message display thread");
+		// this.send_message(this.server, this.current_msg);
 	}
 
 }
