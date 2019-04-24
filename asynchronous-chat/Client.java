@@ -34,21 +34,23 @@ public class Client extends Thread {
 		client_sender.start();
 		client_receiver.start();
 
-		while (true) {
+		// while (true) {
 
 			try {
 
 				Socket client = new Socket(this.server_name, this.port);
 				System.out.println("Just connected to " + client.getRemoteSocketAddress());
-	
-				client_sender.send_message(client);
+				
+				while (true) {
+					client_sender.send_message(client);
+				}
 	
 			} catch (IOException e) {
 				e.printStackTrace();
-				break;
+				// break;
 			}
 
-		}
+		// }
 
 
 	}

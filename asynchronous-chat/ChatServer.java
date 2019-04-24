@@ -37,43 +37,54 @@ public class ChatServer extends Thread {
 
 	public void run() {
 
-		while (true) {
+		// while (true) {
 
 			System.out.println("main ChatServer thread");
-			ServerDisplay msg_display = new ServerDisplay();
-			msg_display.start();
-			Receiver receiver = new Receiver();
-			receiver.start();
+			// ServerDisplay msg_display = new ServerDisplay();
+			// msg_display.start();
+			// Receiver receiver = new Receiver();
+			// receiver.start();
 
-			try {
+			while (true) {
+				try {
+					
+					ServerDisplay msg_display = new ServerDisplay();
+					msg_display.start();
+					Receiver receiver = new Receiver();
+					receiver.start();
+						
+					Socket chat_server = server_socket.accept();
+					System.out.println("Just connected to " + chat_server.getRemoteSocketAddress());
 
-				Socket chat_server = server_socket.accept();
-				// String sender_addr = chat_server.getRemoteSocketAddress().toString();
+					// String sender_addr = chat_server.getRemoteSocketAddress().toString();
+	
+					// DataInputStream in = new DataInputStream(chat_server.getInputStream());
+					// String sender_message = in.readUTF();
+	
+					// DataOutputStream out = new DataOutputStream(chat_server.getOutputStream());
+					
+					// this.current_message = new ChatMessage(sender_addr, sender_message);
+					while (true) {
+						this.current_message = receiver.receive_message(chat_server);
+						this.message_dump.add(this.current_message);
+		
+						// out.writeUTF(this.current_message.sender_ip + ": " + this.current_message.message);
+						msg_display.send_message(chat_server, this.current_message);
+					}
+	
+				} catch (SocketTimeoutException s) {
+	
+					System.out.println("Connection timed out!");
+					// break;
+	
+				} catch (IOException e) {
+					e.printStackTrace();
+					// break;
+				}
 
-				// DataInputStream in = new DataInputStream(chat_server.getInputStream());
-				// String sender_message = in.readUTF();
-
-				// DataOutputStream out = new DataOutputStream(chat_server.getOutputStream());
-				
-				// this.current_message = new ChatMessage(sender_addr, sender_message);
-				this.current_message = receiver.receive_message(chat_server);
-				this.message_dump.add(this.current_message);
-
-				// out.writeUTF(this.current_message.sender_ip + ": " + this.current_message.message);
-				msg_display.send_message(chat_server, this.current_message);
-
-			} catch (SocketTimeoutException s) {
-
-				System.out.println("Connection timed out!");
-				break;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				break;
 			}
 
-
-		}
+		// }
 
 	}
 
