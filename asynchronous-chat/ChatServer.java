@@ -8,13 +8,14 @@ public class ChatServer extends Thread {
 	private ServerSocket server_socket;
 	private ArrayList<ChatMessage> message_dump = new ArrayList<ChatMessage>();
 	private ChatMessage current_message;
-
+	private  ArrayList<Client> client_array;
 	public ChatServer() {
 
 		try {
 
 			server_socket = new ServerSocket(12345);		// default port
 			server_socket.setSoTimeout(10000);
+			
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -28,11 +29,12 @@ public class ChatServer extends Thread {
 
 			server_socket = new ServerSocket(port);
 			server_socket.setSoTimeout(10000);
+			 client_array = new ArrayList<Client>();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 	}
 
 	public void run() {
@@ -55,6 +57,12 @@ public class ChatServer extends Thread {
 						
 					Socket chat_server = server_socket.accept();
 					System.out.println("Just connected to " + chat_server.getRemoteSocketAddress());
+						Client new_client = new Client(chat_server);
+						//add this client to arraylist
+						client_array.add(new_client);
+				
+						new_client.start();
+
 
 					// String sender_addr = chat_server.getRemoteSocketAddress().toString();
 	
