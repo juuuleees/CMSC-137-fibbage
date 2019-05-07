@@ -29,7 +29,7 @@ public class ChatServer extends Thread {
 
 			server_socket = new ServerSocket(port);
 			server_socket.setSoTimeout(10000);
-			 client_array = new ArrayList<Client>();
+			client_array = new ArrayList<Client>();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -63,15 +63,6 @@ public class ChatServer extends Thread {
 				
 						new_client.start();
 
-
-					// String sender_addr = chat_server.getRemoteSocketAddress().toString();
-	
-					// DataInputStream in = new DataInputStream(chat_server.getInputStream());
-					// String sender_message = in.readUTF();
-	
-					// DataOutputStream out = new DataOutputStream(chat_server.getOutputStream());
-					
-					// this.current_message = new ChatMessage(sender_addr, sender_message);
 					while (true) {
 						this.current_message = receiver.receive_message(chat_server);
 						this.message_dump.add(this.current_message);
@@ -114,3 +105,11 @@ public class ChatServer extends Thread {
 	}
 
 }
+
+/*
+
+	References:
+	
+		https://cs.lmu.edu/~ray/notes/javanetexamples/#chat
+
+*/
