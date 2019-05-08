@@ -8,7 +8,7 @@ import java.io.*;
 
 */
 
-public class Receiver extends Thread {
+class Receiver extends Thread {
 
 	private Socket server;
 	private ChatMessage new_msg;

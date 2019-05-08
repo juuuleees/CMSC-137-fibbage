@@ -4,15 +4,12 @@ import java.io.*;
 
 public class Client extends Thread {
 	
+	private Socket client;
 	private String server_name;
 	private int port;
+	private boolean transmitting = false;
 
-	public Client() {
-
-		set_default_server();
-		set_default_port();
-
-	}
+	public Client() {}
 
 	public Client(String s_name, int port) {
 
@@ -22,8 +19,9 @@ public class Client extends Thread {
 	}
 
 	// set defaults
-	public void set_default_server() { this.server_name = "Server"; }
-	public void set_default_port() { this.port = 12345; }
+	public void set_default_server(String s) { this.server_name = s; }
+	public void set_default_port(int p) { this.port = p; }
+	public void set_transmitting(boolean t) { this.transmitting = t; }
 
 	public void run() {
 		System.out.println("client thread");
@@ -38,7 +36,7 @@ public class Client extends Thread {
 
 			try {
 
-				Socket client = new Socket(this.server_name, this.port);
+				this.client = new Socket(this.server_name, this.port);
 				System.out.println("Just connected to " + client.getRemoteSocketAddress());
 				
 				while (true) {
