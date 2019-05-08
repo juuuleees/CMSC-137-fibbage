@@ -25,15 +25,16 @@ public class ClientHandler implements Runnable {
 				// out = new DataOutputStream(new OutputStream(socket.getOutputStream()));
 
 				// receive message from server
-				// String input = in.readUTF();
-				System.out.println(in.readUTF());
+				// System.out.println(in.readUTF());
+				String input = in.readUTF();
+				System.out.println("got it");
 
 				// send message to server
 				// msg_scanner = new Scanner(System.in);
 				// System.out.print("Message clienthandler:" );
 
 				// this.message = msg_scanner.nextLine();
-				// out.writeUTF(this.message);
+				out.writeUTF(input);
 
 
 			}
