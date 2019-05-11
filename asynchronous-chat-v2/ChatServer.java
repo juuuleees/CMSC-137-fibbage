@@ -6,41 +6,13 @@ import java.io.*;
 
 public class ChatServer extends Thread {
 	
-	private ServerSocket server_socket;
-	private ArrayList<ChatMessage> message_dump = new ArrayList<ChatMessage>();
-	private ChatMessage current_message;
-	private ArrayList<Socket> client_array;
-
-	// public ChatServer(int port) {
-
-	// 	try {
-
-	// 		server_socket = new ServerSocket(port);
-	// 		server_socket.setSoTimeout(10000);
-	// 		client_array = new ArrayList<Socket>();			// array of sockets for the clients to connect to
-
-	// 	} catch (IOException e) {
-	// 		e.printStackTrace();
-	// 	}
-		
-	// }
-
-	// public void run() {
-
-	// 	// while (true) {
-
-	// 		System.out.println("main ChatServer thread");
-	// 		int client_count = 0;
-
-	// 		// while (true) {}
-
-	// 	// }
-
-	// }
+	// private ServerSocket server_socket;
+	private static ArrayList<ClientHandler> client_array = new ArrayList<ClientHandler>();
 
 	public static void main(String[] args) {
 
 		// run command: java ChatServer <port number>
+		// ArrayList<ClientHandler> client_array = new ArrayList<ClientHandler>();
 
 		int port = Integer.parseInt(args[0]);
 
@@ -52,9 +24,21 @@ public class ChatServer extends Thread {
 			try (ServerSocket listener = new ServerSocket(port)) {
 
 				while (true) {
-					ClientHandler new_client;
-					thread_pool.execute(new_client = new ClientHandler(listener.accept()));
-					System.out.println(new_client.socket.getRemoteSocketAddress() + " has connected to the server.");
+
+					if (client_array.size() <= 2) {
+
+						ClientHandler new_client;
+						thread_pool.execute(new_client = new ClientHandler(listener.accept()));
+						client_array.add(new_client);
+	
+						System.out.println(new_client.socket.getRemoteSocketAddress() + " has connected to the server.");
+						System.out.println("Current users online: " + client_array.size());
+
+					} else {
+						System.out.println("Maximum chat capacity reached.");
+						continue;
+					}
+
 				}
 
 			}
@@ -63,6 +47,54 @@ public class ChatServer extends Thread {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static class ClientHandler implements Runnable {
+
+		private Socket socket;
+		private String message;
+	
+		public ClientHandler(Socket s) {
+			this.socket = s;
+		}
+	
+		public void run() {
+	
+			try {
+	
+				DataInputStream in = new DataInputStream(socket.getInputStream());
+				// PrintStream out = new PrintStream(socket.getOutputStream());
+	
+				while (true) {
+	
+					// receive message from client
+					message = in.readUTF();
+					System.out.println(message);
+
+					// send messages to other clients
+					// TODO: find out why clients aren't receiving the message
+					synchronized (client_array) {
+						for (ClientHandler c : client_array) {
+
+							if (!c.socket.getRemoteSocketAddress().toString().equals(socket.getRemoteSocketAddress().toString())) {
+								System.out.println("sending parang awa");
+								DataOutputStream out = new DataOutputStream(c.socket.getOutputStream());
+								out.writeUTF(message);
+								System.out.println("sent!");
+							}
+
+						}
+					}
+	
+				}
+	
+	
+			} catch (Exception e) {
+				System.out.println("Error: " + e);
+			}
+	
+		}
+		
 	}
 
 }

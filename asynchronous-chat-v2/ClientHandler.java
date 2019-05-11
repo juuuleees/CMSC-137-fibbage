@@ -17,25 +17,15 @@ public class ClientHandler implements Runnable {
 		try {
 
 			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			PrintStream out = new PrintStream(socket.getOutputStream());
 
 			while (true) {
 
-				// in = new DataInputStream(new InputStream(socket.getInputStream()));
-				// out = new DataOutputStream(new OutputStream(socket.getOutputStream()));
-
-				// receive message from server
-				// System.out.println(in.readUTF());
+				// receive message from client
 				String input = in.readUTF();
 				System.out.println("got it");
 
-				// send message to server
-				// msg_scanner = new Scanner(System.in);
-				// System.out.print("Message clienthandler:" );
-
-				// this.message = msg_scanner.nextLine();
-				out.writeUTF(input);
-
+				out.println(input);
 
 			}
 
@@ -47,3 +37,13 @@ public class ClientHandler implements Runnable {
 	}
 	
 }
+
+/*
+
+	TO DO:
+
+		> server has to send message to the rest of the clients
+			- add the client sockets to ArrayList<Socket> then 
+				send to each
+
+*/

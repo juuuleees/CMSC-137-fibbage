@@ -31,7 +31,7 @@ public class Client extends Thread {
 			client = new Socket(server_name, port);
 			System.out.println("Just connected to " + client.getRemoteSocketAddress());
 
-			// DataInputStream in = new DataInputStream(client.getInputStream());
+			DataInputStream in = new DataInputStream(client.getInputStream());
 			DataOutputStream out = new DataOutputStream(client.getOutputStream());
 
 			while (true) {
@@ -42,10 +42,12 @@ public class Client extends Thread {
 
 				if (msg.equals("bye")) {
 					break;
+				} else {
+					out.writeUTF(msg);
 				}
 
-				out.writeUTF(msg);
-				// System.out.println(in.readUTF());
+				// TODO: find out why it's not receiving anything
+				in.readUTF();
 
 			}
 
