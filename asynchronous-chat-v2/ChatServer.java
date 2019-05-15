@@ -4,10 +4,15 @@ import java.util.concurrent.*;
 import java.net.*;
 import java.io.*;
 
+// UPLB Wifi IP: 10.11.229.33
+// Dorm IP: 192.168.0.25
+
 public class ChatServer extends Thread {
 	
 	// private ServerSocket server_socket;
 	private static ArrayList<ClientHandler> client_array = new ArrayList<ClientHandler>();
+	private static ArrayList<OutputStream> writers = new ArrayList<OutputStream>();
+	private static String current_message;
 
 	public static void main(String[] args) {
 
@@ -25,7 +30,7 @@ public class ChatServer extends Thread {
 
 				while (true) {
 
-					if (client_array.size() <= 2) {
+					if (client_array.size() <= 8) {
 
 						ClientHandler new_client;
 						thread_pool.execute(new_client = new ClientHandler(listener.accept()));
@@ -53,6 +58,7 @@ public class ChatServer extends Thread {
 
 		private Socket socket;
 		private String message;
+		private PrintWriter writer;
 	
 		public ClientHandler(Socket s) {
 			this.socket = s;
@@ -63,25 +69,35 @@ public class ChatServer extends Thread {
 			try {
 	
 				DataInputStream in = new DataInputStream(socket.getInputStream());
-				// PrintStream out = new PrintStream(socket.getOutputStream());
+				// writer = new PrintWriter(socket.getOutputStream(), true);
+				OutputStream out = socket.getOutputStream();
+				// writers.add(writer);
+				writers.add(out);
 	
 				while (true) {
 	
 					// receive message from client
-					message = in.readUTF();
-					System.out.println(message);
+					current_message = in.readUTF();
+					current_message = socket.getRemoteSocketAddress() + ": " + current_message;
+					System.out.println(current_message);
+
+					if (current_message.equals("bye")) {
+						System.out.println(socket.getRemoteSocketAddress() + " has left the chat.");
+						client_array.remove(this);
+						System.out.println("Current users online: " + client_array.size());
+						socket.close();
+					}
 
 					// send messages to other clients
 					// TODO: find out why clients aren't receiving the message
-					synchronized (client_array) {
-						for (ClientHandler c : client_array) {
+					synchronized (writers) {
 
-							if (!c.socket.getRemoteSocketAddress().toString().equals(socket.getRemoteSocketAddress().toString())) {
-								System.out.println("sending parang awa");
-								DataOutputStream out = new DataOutputStream(c.socket.getOutputStream());
-								out.writeUTF(message);
-								System.out.println("sent!");
-							}
+						for (OutputStream os : writers) {
+							
+							PrintWriter sender = new PrintWriter(os, true);
+
+							sender.println(current_message);
+							sender.flush();
 
 						}
 					}
@@ -98,3 +114,11 @@ public class ChatServer extends Thread {
 	}
 
 }
+
+/*
+
+	References:
+
+		https://cs.lmu.edu/~ray/notes/javanetexamples/?fbclid=IwAR2-S2Cj5_b6ts-v753vPGrW4piaWbLeUt1hC7ZqogLdrC0-Z511K967OCE#chat
+
+*/

@@ -24,14 +24,13 @@ public class Client extends Thread {
 	public void set_transmitting(boolean t) { this.transmitting = t; }
 
 	public void run() {
-		System.out.println("client thread");
 
 		try {
 
 			client = new Socket(server_name, port);
 			System.out.println("Just connected to " + client.getRemoteSocketAddress());
 
-			DataInputStream in = new DataInputStream(client.getInputStream());
+			Scanner incoming = new Scanner(client.getInputStream());
 			DataOutputStream out = new DataOutputStream(client.getOutputStream());
 
 			while (true) {
@@ -41,13 +40,15 @@ public class Client extends Thread {
 				String msg = input.nextLine();
 
 				if (msg.equals("bye")) {
+					out.writeUTF(msg);
 					break;
 				} else {
 					out.writeUTF(msg);
 				}
 
 				// TODO: find out why it's not receiving anything
-				in.readUTF();
+				String line = incoming.nextLine();
+				System.out.println("incoming" + line);
 
 			}
 
@@ -56,31 +57,6 @@ public class Client extends Thread {
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}
-
-		// Sender client_sender = new Sender();
-		// Receiver client_receiver = new Receiver();
-
-		// client_sender.start();
-		// client_receiver.start();
-
-		// // while (true) {
-
-		// 	try {
-
-		// 		this.client = new Socket(this.server_name, this.port);
-		// 		System.out.println("Just connected to " + client.getRemoteSocketAddress());
-				
-		// 		while (true) {
-		// 			client_sender.send_message(client);
-		// 		}
-	
-		// 	} catch (IOException e) {
-		// 		e.printStackTrace();
-		// 		// break;
-		// 	}
-
-		// // }
-
 
 	}
 
