@@ -7,19 +7,17 @@ import java.awt.*;
 import java.util.Random;
 import java.util.*;
 import javax.swing.JOptionPane;
-import java.io.IOException; 
 import java.net.DatagramPacket; 
 import java.net.DatagramSocket; 
 import java.net.InetAddress; 
-import java.net.SocketException;
 
 public class Quiz extends JFrame{
 	JPanel p=new JPanel();
 	
 	CardLayout cards=new CardLayout();
 
-	DatagramSocket d_socket = new DatagramSocket(51619);
-	DatagramPacket received_packet = null;
+	private static ArrayList<InetAddress> addresses = new ArrayList<InetAddress>();
+	private static ArrayList<Integer> ports = new ArrayList<Integer>();
 	String data_string;
 
 	int j;
@@ -27,7 +25,7 @@ public class Quiz extends JFrame{
 	int wrongs=0;
 	int total=0;
 
-	String bluff;
+	private static String bluff;
 	
 	
 	
@@ -173,7 +171,8 @@ public class Quiz extends JFrame{
 	public static void main(String args[]){
 		new Quiz();
 
-		
+		DatagramServer server = new DatagramServer();
+		server.run();		
 	}
 	
 	public Quiz(){
@@ -271,6 +270,45 @@ public class Quiz extends JFrame{
 		);
 		System.exit(0);
 	}
+
+	public static class DatagramServer {
+
+		private DatagramSocket server;
+		private byte[] data_buffer = new byte[256];
+	
+		public void run() {
+
+			try {
+
+				server = new DatagramSocket(51519);
+			
+				while (true) {
+
+					System.out.println("running");
+	
+					DatagramPacket data_packet = new DatagramPacket(data_buffer, data_buffer.length);
+					server.receive(data_packet);
+					System.out.println("received");
+	
+					InetAddress packet_address = data_packet.getAddress();
+					addresses.add(packet_address);
+					int source_port = data_packet.getPort();
+					ports.add(source_port);
+
+					System.out.println("Addresses: " + addresses.size() + ", Ports: " + ports.size());
+	
+					System.out.println(source_port);
+	
+				}
+
+			} catch (Exception e) {
+				System.out.println("Error: " + e);
+			}
+
+		}
+
+	}
+
 }
 
 
@@ -278,5 +316,6 @@ public class Quiz extends JFrame{
 
 	References:
 		https://www.geeksforgeeks.org/working-udp-datagramsockets-java/
+		https://www.baeldung.com/udp-in-java
 
 */

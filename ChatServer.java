@@ -4,9 +4,6 @@ import java.util.concurrent.*;
 import java.net.*;
 import java.io.*;
 
-// UPLB Wifi IP: 10.11.229.33
-// Dorm IP: 192.168.0.25
-
 public class ChatServer extends Thread {
 	
 	// private ServerSocket server_socket;
